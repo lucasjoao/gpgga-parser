@@ -2,7 +2,7 @@
 
 Parser que a partir de uma mensagem GPGGA NMEA que contêm latitude, longitude, altitude e horário retorna as coordenadas no sistema ECEF e o seu timestamp.
 
-# Execução
+## Execução
 
 Há três possibilidades:
 

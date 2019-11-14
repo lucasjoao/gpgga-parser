@@ -3,6 +3,7 @@
 #include <vector>
 #include <ctime>
 #include <time.h>
+#include <math.h>
 
 class GPGGAConstants {
 
@@ -36,6 +37,9 @@ private:
     // size will be always 15
     std::vector<std::string> _split_message;
     std::string _delimiter = ",";
+
+    const double a = 6378137.0; // WGS-84 semi-major axis
+    const double e2 = 6.6943799901377997e-3; // WGS-84 first eccentricity squared
 
     int _timestamp;
     int _x;
@@ -75,8 +79,27 @@ private:
         _timestamp = timegm(&utc);
 
         // calculate x, y and z in ECEF system
+        // (ref http://danceswithcode.net/engineeringnotes/geodetic_to_ecef/geodetic_to_ecef.html)
+        // (ref https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_geodetic_to_ECEF_coordinates)
         //
-        // the values are in meters
+        // the result values are in meters
+        // the nmea value of altitude need to be in meters too
+        // (see http://aprs.gids.nl/nmea/#gga)
+        double latitude = stof(_split_message.at(2));
+        double longitude = stof(_split_message.at(4));
+        double altitude = stof(_split_message.at(9));
+
+        if (_split_message.at(3).compare("S") == 0) {
+            latitude *= -1.0;
+        }
+        if (_split_message.at(5).compare("W") == 0) {
+            longitude *= -1.0;
+        }
+
+        double n = a / sqrt(1 - e2 * sin(latitude) * sin(latitude));
+        _x = (n + altitude) * cos(latitude) * cos(longitude);
+        _y = (n + altitude) * cos(latitude) * sin(longitude);
+        _z = (n * (1 - e2) + altitude) * sin(latitude);
     }
 
 public:
@@ -109,7 +132,9 @@ int main(int argc, char *argv[]) {
         parser->print_result();
         return 0;
     } else if (argc == 1) {
-        parser->run(constants->random_message());
+        std::string message = constants->random_message();
+        std::cout << message << std::endl;
+        parser->run(message);
         parser->print_result();
         return 0;
     } else {

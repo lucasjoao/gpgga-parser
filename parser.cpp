@@ -89,7 +89,10 @@ public:
     }
 
     void print_result() {
-
+        std::cout << "x: " << _x << std::endl;
+        std::cout << "y: " << _y << std::endl;
+        std::cout << "z: " << _z << std::endl;
+        std::cout << "timestamp: " << _timestamp << std::endl;
     }
 };
 
@@ -99,7 +102,7 @@ int main(int argc, char *argv[]) {
 
     if (argc == 2 && strcmp(argv[1], "show") == 0) {
         // just show a random gpgga message
-        std::cout << constants->random_message() << "\n";
+        std::cout << constants->random_message() << std::endl;
         return 0;
     } else if (argc == 2) {
         parser->run(argv[1]);
@@ -110,7 +113,7 @@ int main(int argc, char *argv[]) {
         parser->print_result();
         return 0;
     } else {
-        std::cout << "Argumentos incorretos! Favor ver makefile e começo do main em parser.cpp";
+        std::cout << "Argumentos incorretos! Favor ver makefile e começo do main em parser.cpp" << std::endl;
         return 1;
     }
 }

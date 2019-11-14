@@ -36,7 +36,7 @@ private:
     // size will be always 15
     std::vector<std::string> _split_message;
     std::string _delimiter = ",";
-    
+
     int _timestamp;
     int _x;
     int _y;
@@ -60,20 +60,20 @@ private:
         //
         // nmea has only the hour, so the date that is used is the current
         std::tm utc;
-        
+
         time_t time_now = time(0);
         tm* now = localtime(&time_now);
-        utc.tm_year = now->tm_year;  
-        utc.tm_mon = now->tm_mon;           
-        utc.tm_mday = now->tm_mday;          
-        
+        utc.tm_year = now->tm_year;
+        utc.tm_mon = now->tm_mon;
+        utc.tm_mday = now->tm_mday;
+
         std::string utc_from_nmea =  _split_message.at(1);
         utc.tm_hour = stoi(utc_from_nmea.substr(0, 2));
         utc.tm_min = stoi(utc_from_nmea.substr(2, 2));
         utc.tm_sec = stoi(utc_from_nmea.substr(4, 2));
-        utc.tm_isdst = -1;        
-        _timestamp = mktime(&utc);
-        
+        utc.tm_isdst = -1;
+        _timestamp = timegm(&utc);
+
         // calculate x, y and z in ECEF system
         //
         // the values are in meters
